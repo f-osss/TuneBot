@@ -46,4 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const send = document.getElementById('send');
     send.addEventListener('click', handleSendMessages);
 
+
+    const chatInput = document.getElementById('chat');
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSendMessages(e);
+        }
+    });
 });

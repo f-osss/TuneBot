@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
 
-# Intent definitions
 INTENTS = {
     "greet": ["hello", "hi", "hey"],
     "goodbye": ["bye", "goodbye", "see you"],

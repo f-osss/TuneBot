@@ -19,7 +19,7 @@ def chat():
     for intent, keywords in INTENTS.items():
         if any(keyword in user_message for keyword in keywords):
             if intent == "greet":
-                return jsonify({"reply": "Hello! How can I help you?"})
+                return jsonify({"reply": "Hello! I am Chatbot, how can I help you?"})
             elif intent == "goodbye":
                 return jsonify({"reply": "Goodbye! Have a great day!"})
             elif intent == "thanks":

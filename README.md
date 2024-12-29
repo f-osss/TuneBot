@@ -1,24 +1,27 @@
-# Flask Chatbot
+# TuneBot 🎵  
+
 
 ## Description
-A simple chatbot web application built with Flask that allows users to send messages and receive automated replies based on predefined intents.
+TuneBot is a chatbot web application built with Flask that helps you discover music tailored to your mood or preferences. Whether you're looking for genre recommendations, artist suggestions, or playlists, TuneBot has you covered!  
 
 # Installation
 ## Clone the repository
-git clone https://github.com/f-osss/Chatbot.git
+git clone https://github.com/f-osss/TuneBot.git
 
 ## Navigate to the project directory
-`cd Chatbot`
+```
+cd TuneBot
+```
 
 ## Set up the virtual environment
 ### For Windows:
 ```
-chatbot_env\Scripts\activate
+tunebot_env\Scripts\activate
 ```
 
 ### For macOS:
 ```
-source chatbot_env/bin/activate
+source tunebot_env/bin/activate
 ```
 
 

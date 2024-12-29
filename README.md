@@ -2,7 +2,7 @@
 
 
 ## Description
-TuneBot is a chatbot web application built with Flask that helps you discover music tailored to your mood or preferences. Whether you're looking for genre recommendations, artist suggestions, or playlists, TuneBot has you covered!  
+TuneBot is a chatbot web application built with Flask that helps you discover music tailored to your mood or preferences.
 
 # Installation
 ## Clone the repository

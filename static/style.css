@@ -28,9 +28,8 @@ main {
     padding: 20px;
 }
 
-.message-left {
+.message-left, .message-right {
     border: 1px solid #2F81F7;
-    background-color: #132F4C;
     padding: 10px;
     border-radius: 5px;
     transition: background-color 0.3s;
@@ -38,25 +37,32 @@ main {
     box-sizing: border-box;
 }
 
+.message-left {
+    background-color: #132F4C;
+}
+
 .message-right {
     align-self: flex-end;
     margin-right: 20px;
-    border: 1px solid #3FB950;
     background-color: #0D2818;
     color: #E3E8EF;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    width: 40%;
-    box-sizing: border-box;
+    border: 1px solid #3FB950;
+    width: 30%;
 }
+
+
+@media (max-width: 768px) {
+    .message-left{
+        width: 60%;
+    }
+}
+
 
 #input-area {
     position: fixed;
     bottom: 0;
     right: 0;
     width: 40%;
-
     align-items: center;
     background-color: #132F4C;
     padding: 10px;

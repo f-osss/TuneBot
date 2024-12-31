@@ -13,7 +13,8 @@ DEEZER_API_URL = os.getenv("DEEZER_API_URL")
 INTENTS = {
     "greet": ["hello", "hi", "hey", "hola"],
     "goodbye": ["bye", "goodbye", "see you"],
-    "thanks": ["thanks", "thank you"]
+    "thanks": ["thanks", "thank you"],
+    "no": ["no", "nope"]
     # "mood": ["happy", "sad", "angry", "relaxed", "excited", "romantic", "energetic"]
 }
 
@@ -52,9 +53,11 @@ mood_keywords = {
 
 nlp = spacy.load("en_core_web_sm")
 
+
 @app.route("/")
 def home():
     return send_file("files/index.html")
+
 
 def get_spotify_token():
     client_id = os.getenv("SPOTIFY_CLIENT_ID")
@@ -78,6 +81,7 @@ def get_spotify_token():
     else:
         print(f"Error fetching token: {response.status_code} - {response.text}")
         return None
+
 
 def get_spotify_link(song_name, artist_name):
     try:
@@ -106,6 +110,7 @@ def get_spotify_link(song_name, artist_name):
         print(f"Error fetching Spotify link: {e}")
     return None
 
+
 def get_recommendations(genre):
     search_url = f"{DEEZER_API_URL}/search"
     params = {"q": genre.lower()}
@@ -132,32 +137,41 @@ def get_recommendations(genre):
         print(f"Error fetching data: {e}")
     return None
 
+
 # Chat API
 @app.route("/chat", methods=["POST"])
 def chat():
     user_message = request.json.get("message", "").lower()
-    for intent, keywords in INTENTS.items():
-        if any(keyword in user_message for keyword in keywords):
-            if intent == "greet":
-                return jsonify({
-                    "reply": "🎵 Hi there! I'm TuneBot. Tell me your mood, and I'll recommend some tunes!"})
-            elif intent == "goodbye":
-                return jsonify({"reply": "👋 Goodbye! Have a great day!"})
-            elif intent == "thanks":
-                return jsonify({"reply": "😊 You're welcome!"})
 
     doc = nlp(user_message.lower())
     genre = None
     user_mood = None
+
+    asking_mood = False
 
     for mood, keywords in mood_keywords.items():
         for keyword in keywords:
             if keyword in doc.text:
                 user_mood = keyword
                 genre = MOOD_GENRES.get(mood)
+                asking_mood = True
                 break
         if user_mood:
+            asking_mood = True
             break
+
+    if not asking_mood:
+        for intent, keywords in INTENTS.items():
+            if any(keyword in user_message for keyword in keywords):
+                if intent == "greet":
+                    return jsonify({
+                        "reply": "🎵 Hi there! I'm TuneBot. Tell me your mood, and I'll recommend some tunes!"})
+                elif intent == "goodbye":
+                    return jsonify({"reply": "👋 Goodbye! Have a great day!"})
+                elif intent == "thanks":
+                    return jsonify({"reply": "😊 You're welcome!"})
+                elif intent == "no":
+                    return jsonify({"reply": "😔 Pretty Please"})
 
     if not genre:
         return jsonify({"reply": "I couldn't detect your mood. Could you tell me more?"})
@@ -170,9 +184,11 @@ def chat():
             spotify_link = get_spotify_link(song['name'], song['artist'])
             if spotify_link:
                 song_names += f"<br><a href='{spotify_link}' target='_blank'>{song['name']} by {song['artist']}</a>"
-        return jsonify({"reply": f"🎶 Here are some songs for your {user_mood} mood:<br>{song_names}"})
+        return jsonify({
+            "reply": f"🎶 Here are some songs for your {user_mood} mood:<br>{song_names}<br><br>Would you like to hear more songs?"})
     else:
         return jsonify({"reply": "Sorry, I couldn't find any songs for that mood. Try again!"})
+
 
 if __name__ == "__main__":
     app.run(debug=True)

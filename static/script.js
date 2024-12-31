@@ -1,14 +1,31 @@
 const handleSendMessages = (e) => {
     e.preventDefault();
+
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'message-left';
+    typingIndicator.id = 'typing-indicator';
+    typingIndicator.style.display = 'none';
+
+    const typingDots = document.createElement('span');
+    typingDots.className = 'typing-dots';
+    typingDots.textContent = 'Thinking...';
+    typingIndicator.appendChild(typingDots);
+
+
     const chat = document.getElementById('chat');
     const message = chat.value;
     if (message.trim() !== '') {
         const data = JSON.stringify({message: message});
         const messagesContainer = document.getElementById('messages');
+
         const userMessage = document.createElement('div');
         userMessage.className = 'message-right';
         userMessage.textContent = message;
         messagesContainer.appendChild(userMessage);
+
+        messagesContainer.appendChild(typingIndicator);
+        typingIndicator.style.display = 'block';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
         fetch('/chat', {
             method: 'POST',
@@ -20,6 +37,8 @@ const handleSendMessages = (e) => {
         })
             .then(response => response.json())
             .then(response => {
+                typingIndicator.style.display = 'none';
+
                 if (response.reply && response.reply.trim() !== '') {
                     const botReply = document.createElement('div');
                     botReply.className = 'message-left';

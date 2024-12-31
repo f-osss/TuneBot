@@ -52,7 +52,7 @@ main {
 
 
 @media (max-width: 768px) {
-    .message-left{
+    .message-left {
         width: 60%;
     }
 }
@@ -77,9 +77,9 @@ main {
     color: #E3E8EF;
     font-size: 18px;
     border-radius: 5px;
-    height: 50px;  /* Inherit height from the input area */
-    width: 100%;   /* Inherit width from the input area */
-    box-sizing: border-box; /* Ensure padding is included in width and height */
+    height: 50px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 
@@ -104,3 +104,39 @@ main {
 #send:hover {
     background-color: #388BFD;
 }
+
+a {
+    color: #58A6FF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #1ED760;
+}
+
+.typing-dots {
+    display: inline-block;
+    color: #58A6FF;
+    position: relative;
+}
+
+.typing-dots::after {
+    content: '...';
+    animation: typing 1.5s steps(5, end) infinite;
+}
+
+@keyframes typing {
+    0% { content: ''; }
+    20% { content: '.'; }
+    40% { content: '..'; }
+    60% { content: '...'; }
+    80% { content: '..'; }
+    100% { content: '.'; }
+}
+
+
+
+
+

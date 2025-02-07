@@ -57,8 +57,8 @@ def home():
 
 
 def get_spotify_token():
-    client_id = "4075673366ee43d586bb2c36fc7db518"
-    client_secret = "21239b9d352a48f38c0c5613eb19e1f9"
+    client_id = ""
+    client_secret = ""
 
     if not client_id or not client_secret:
         print("Error: Missing Spotify credentials.")

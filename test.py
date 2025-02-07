@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify, send_file
 import requests, os, random, spotipy
+from dotenv import load_dotenv
 from urllib.parse import quote
+from spotipy.oauth2 import SpotifyClientCredentials
 import spacy
 
+load_dotenv(dotenv_path="tunebot_env/.env")
 app = Flask(__name__)
 
-DEEZER_API_URL = "https://api.deezer.com"
+DEEZER_API_URL = os.getenv("DEEZER_API_URL")
 
 INTENTS = {
     "greet": ["hello", "hi", "hey", "hola"],
@@ -57,8 +60,8 @@ def home():
 
 
 def get_spotify_token():
-    client_id = "4075673366ee43d586bb2c36fc7db518"
-    client_secret = "21239b9d352a48f38c0c5613eb19e1f9"
+    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
     if not client_id or not client_secret:
         print("Error: Missing Spotify credentials.")

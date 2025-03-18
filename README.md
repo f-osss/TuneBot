@@ -40,3 +40,5 @@ python app.py
 2. Type a message regarding your mood in the TuneBot and click "Send".
 3. Receive a response from the TuneBot.
 
+   ```spotify made some changes to their API, so it's currently not working```
+

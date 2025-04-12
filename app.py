@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify, send_file
 import requests, os, random, spotipy
 from urllib.parse import quote
+from dotenv import load_dotenv
 import spacy
 
+load_dotenv(dotenv_path="tunebot_env/.env")
 app = Flask(__name__)
 
 DEEZER_API_URL = "https://api.deezer.com"
@@ -57,8 +59,8 @@ def home():
 
 
 def get_spotify_token():
-    client_id = ""
-    client_secret = ""
+    client_id = os.getenv("SPOTIFY_CLIENT_ID")
+    client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 
     if not client_id or not client_secret:
         print("Error: Missing Spotify credentials.")
@@ -82,27 +84,31 @@ def get_spotify_token():
 
 def get_spotify_link(song_name, artist_name):
     try:
-        song_name = quote(song_name)
-        artist_name = quote(artist_name)
         token = get_spotify_token()
-        url = f"https://api.spotify.com/v1/search?q=track%3A{song_name}%2520artist%3A{artist_name}&type=track%2Cartist"
         if not token:
             print("Error: Could not get Spotify token.")
             return None
 
         headers = {"Authorization": f"Bearer {token}"}
 
+        query = f"track:{song_name} artist:{artist_name}"
+        url = f"https://api.spotify.com/v1/search?q={quote(query)}&type=track&limit=1"
         response = requests.get(url, headers=headers)
-        if response.status_code == 200:
+        data = response.json()
+
+        if not data.get("tracks", {}).get("items"):
+            url = f"https://api.spotify.com/v1/search?q={quote(song_name)}&type=track&limit=5"
+            response = requests.get(url, headers=headers)
             data = response.json()
 
-            if "tracks" in data and "items" in data["tracks"] and data["tracks"]["items"]:
-                link = data["tracks"]["items"][0]["external_urls"]["spotify"]
-                return link
-            else:
-                print("No track found.")
-        else:
-            print(f"Error: {response.status_code} - {response.text}")
+            for item in data.get("tracks", {}).get("items", []):
+                for artist in item.get("artists", []):
+                    if artist_name.lower() in artist["name"].lower():
+                        return item["external_urls"]["spotify"]
+            return None
+
+        return data["tracks"]["items"][0]["external_urls"]["spotify"]
+
     except Exception as e:
         print(f"Error fetching Spotify link: {e}")
     return None
@@ -125,6 +131,7 @@ def get_recommendations(genre):
                 song_list.append({
                     "name": song_name,
                     "artist": artist_name,
+                    "deezer_link": song['link']
                 })
 
             # Return up to 5 random songs
@@ -179,8 +186,17 @@ def chat():
         song_names = ""
         for song in songs:
             spotify_link = get_spotify_link(song['name'], song['artist'])
+            deezer_link = song.get('deezer_link')
             if spotify_link:
-                song_names += f"<br><a href='{spotify_link}' target='_blank'>{song['name']} by {song['artist']}</a>"
+                link = spotify_link
+                platform = "Spotify"
+            elif deezer_link:
+                link = deezer_link
+                platform = "Deezer"
+            else:
+                continue
+
+            song_names += f"<br><a href='{link}' target='_blank'>{song['name']} by {song['artist']} ({platform})</a>"
         return jsonify({
             "reply": f"🎶 Here are some songs for your {user_mood} mood:<br>{song_names}<br><br>Would you like to hear more songs?"})
     else:
